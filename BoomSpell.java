@@ -47,13 +47,13 @@ public class BoomSpell extends Spell {
 		// check destroy against other plugins
 		if (PLUGIN_CHECK) {
 			boolean cancel = false;
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), target});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX() + (BLAST_RADIUS), target.getY(), target.getZ())});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX() - (BLAST_RADIUS), target.getY(), target.getZ())});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX(), target.getY() + (BLAST_RADIUS), target.getZ())});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX(), target.getY() - (BLAST_RADIUS), target.getZ())});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX(), target.getY(), target.getZ() + (BLAST_RADIUS))});
-			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player.getUser(), etc.getServer().getBlockAt(target.getX(), target.getY(), target.getZ() - (BLAST_RADIUS))});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, target});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX() + (BLAST_RADIUS), target.getY(), target.getZ())});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX() - (BLAST_RADIUS), target.getY(), target.getZ())});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX(), target.getY() + (BLAST_RADIUS), target.getZ())});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX(), target.getY() - (BLAST_RADIUS), target.getZ())});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX(), target.getY(), target.getZ() + (BLAST_RADIUS))});
+			cancel = cancel || (Boolean)etc.getLoader().callHook(PluginLoader.Hook.BLOCK_DESTROYED, new Object [] {player, etc.getServer().getBlockAt(target.getX(), target.getY(), target.getZ() - (BLAST_RADIUS))});
 			
 			// a plugin returned true to cancel destruction
 			if (cancel) {
