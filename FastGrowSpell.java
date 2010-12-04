@@ -1,6 +1,5 @@
 import java.util.Random;
 import java.util.HashSet;
-import java.awt.geom.*;
 
 public class FastGrowSpell extends Spell {
 
@@ -13,6 +12,9 @@ public class FastGrowSpell extends Spell {
 	private String OTHER_COST_NAME;
 	private int OTHER_COST_AMT;
 	private int TREE_REDSTONE_COST;
+	
+	private int SIZE_MIN;
+	private int SIZE_VARIATION;
 	
 	// strings
 	private String STR_CAST_ON;
@@ -39,6 +41,10 @@ public class FastGrowSpell extends Spell {
 		OTHER_COST_NAME = properties.getString("fastgrow-other-cost-name","saplings");
 		OTHER_COST_AMT = properties.getInt("fastgrow-other-cost-amt",3);
 		TREE_REDSTONE_COST = properties.getInt("fastgrow-per-tree-redstone-cost",3);
+		
+		SIZE_MIN = properties.getInt("fastgrow-tree-size-min",5);
+		SIZE_VARIATION = properties.getInt("fastgrow-tree-size-variation",12);
+		if (SIZE_MIN < 1) SIZE_MIN = 1;
 		
 		STR_CAST_ON = properties.getString("fastgrow-cast-on-str","Your hands glow faintly green, and you gain nature powers.");
 		STR_CAST_ON_OTHERS = properties.getString("fastgrow-cast-on-others-str","[caster]'s hands start to glow faintly green!");
@@ -90,7 +96,7 @@ public class FastGrowSpell extends Spell {
 				//boolean success = growTree(blockPlaced.getX(), blockPlaced.getY(), blockPlaced.getZ());
 				blockPlaced.setType(0);
 				blockPlaced.update();
-				TreeGrower tree = new TreeGrower();
+				TreeGrower tree = new TreeGrower(SIZE_MIN, SIZE_VARIATION);
 				boolean success = tree.grow(rand, blockPlaced.getX(), blockPlaced.getY(), blockPlaced.getZ());
 				//bj tree = new hd();
 				//boolean success = tree.a(etc.getServer().getMCServer().e, rand, blockPlaced.getX(), blockPlaced.getY(), blockPlaced.getZ());
@@ -109,46 +115,6 @@ public class FastGrowSpell extends Spell {
 			}
 		}
 		return false;
-	}
-	
-	public boolean growTree(int x, int y, int z) {
-		Server s = etc.getServer();
-		
-		if (s.getBlockIdAt(x,y-1,z) != 2 && s.getBlockIdAt(x,y-1,z) != 3) {
-			return false;
-		}
-		
-		int h = rand.nextInt(3) + 5;
-		
-		for (int i = 0; i < h; i++) {
-			if (s.getBlockIdAt(x,y+i,z) != 0) {
-				return false;
-			}
-		}
-		
-		int xSize = rand.nextInt(3) + 2;
-		int ySize = rand.nextInt(3) + 3;
-		int zSize = rand.nextInt(3) + 2;
-		
-		// create trunk
-		for (int i = 0; i < h; i++) {
-			s.setBlockAt(17,x,y+i,z);
-		}
-		
-		// create leaves
-		Ellipse2D.Float xEl = new Ellipse2D.Float(x-xSize,y+h-ySize,xSize*2,ySize*2);
-		Ellipse2D.Float zEl = new Ellipse2D.Float(z-zSize,y+h-ySize,zSize*2,ySize*2);
-		for (int lx = x - xSize; lx <= x + xSize; lx++) {
-			for (int ly = y + h - ySize; ly <= y + h + ySize; ly++) {
-				for (int lz = z - zSize; lz <= z + zSize; lz++) {
-					if (s.getBlockIdAt(lx,ly,lz) == 0 && xEl.contains(lx,ly) && zEl.contains(lz,ly)) {
-						s.setBlockAt(18,lx,ly,lz);
-					}
-				}
-			}
-		}
-		
-		return true;
 	}
 
 }

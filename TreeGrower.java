@@ -23,8 +23,9 @@ public class TreeGrower
     int m;
     int n;
     int o[][];
+    int min;
 
-    public TreeGrower()
+    public TreeGrower(int sizeMin, int sizeVar)
     {
         b = new Random();
         e = 0;
@@ -34,7 +35,8 @@ public class TreeGrower
         j = 1.0D;
         k = 1.0D;
         l = 1;
-        m = 12;
+        min = sizeMin;
+        m = sizeVar; //12
         n = 4;
     }
 
@@ -386,7 +388,7 @@ public class TreeGrower
         d[1] = j1;
         d[2] = k1;
         if(e == 0)
-            e = 5 + b.nextInt(m);
+            e = min + b.nextInt(m);
         if(!e())
         {
             return false;
