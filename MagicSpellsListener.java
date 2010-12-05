@@ -17,6 +17,10 @@ public class MagicSpellsListener extends PluginListener {
 	private static HashSet<Spell> spells;
 	private static Hashtable<String,Spell> spellNames;
 	private static Hashtable<String,String> spellDescs;
+	
+	private static Hashtable<CastPattern,String> castPatterns;
+	private static Hashtable<String,CastPattern> activeCastPatterns;
+	
 	private static Hashtable<String,HashSet<String>> learnedSpells;
 	
 	// rune data
@@ -39,6 +43,8 @@ public class MagicSpellsListener extends PluginListener {
 	private static String STR_CAST_USAGE;
 	public static String STR_CAST_FAIL;
 	public static boolean LEARN_REQUIRES_PERM;
+	private boolean CAST_PATTERNS_ENABLED;
+	private int CAST_PATTERNS_WAND;
 	private static int RUNE_ACTIVATOR;
 	private static int RUNE_TEACHER;
 	private static boolean RUNES_ENABLED;
@@ -52,6 +58,8 @@ public class MagicSpellsListener extends PluginListener {
 		STR_CAST_USAGE = properties.getString("general-cast-usage-str","Usage: /cast [spell] <options> (not all spells have options)@Use /cast list <page> to list spells you have learned.@Use /cast cost [spell] to check the reagent cost of a spell.");
 		STR_CAST_FAIL = properties.getString("general-cast-fail-str","Your magic words have no effect.");
 		LEARN_REQUIRES_PERM = properties.getBoolean("general-learning-requires-comm-perm",false);
+		CAST_PATTERNS_ENABLED = properties.getBoolean("general-cast-patterns-enabled",true);
+		CAST_PATTERNS_WAND = properties.getInt("general-cast-patterns-wand",280);
 		RUNE_ACTIVATOR = properties.getInt("general-rune-activator",276);
 		RUNE_TEACHER = properties.getInt("general-rune-teacher",277);
 		RUNES_ENABLED = properties.getBoolean("general-rune-system-enabled",true);
@@ -61,6 +69,11 @@ public class MagicSpellsListener extends PluginListener {
 		spells = new HashSet<Spell>();
 		spellNames = new Hashtable<String,Spell>();
 		spellDescs = new Hashtable<String,String>();
+		
+		if (CAST_PATTERNS_ENABLED) {
+			castPatterns = new Hashtable<CastPattern,String>();
+			activeCastPatterns = new Hashtable<String,CastPattern>();
+		}
 		
 		// hooks
 		blockPlaceCalls = new HashSet<Spell>();
@@ -147,6 +160,10 @@ public class MagicSpellsListener extends PluginListener {
 		spells = null;
 		spellNames = null;
 		spellDescs = null;
+		
+		castPatterns = null;
+		activeCastPatterns = null;
+		
 		learnedSpells = null;
 		
 		blockPlaceCalls = null;
@@ -342,7 +359,36 @@ public class MagicSpellsListener extends PluginListener {
 		return result;
 	}
 	
+	public boolean onItemUse(Player player, Block placed, Block clicked, Item item) {
+		if (CAST_PATTERNS_ENABLED && item.getItemId() == CAST_PATTERNS_WAND) {
+			if (!activeCastPatterns.containsKey(player.getName())) {
+				activeCastPatterns.put(player.getName(), new CastPattern());
+				player.sendMessage(Spell.TEXT_COLOR + "You begin to cast a spell...");
+			} else {
+				CastPattern pattern = activeCastPatterns.remove(player.getName());
+				boolean casted = false;
+				for (CastPattern p : castPatterns.keySet()) {
+					if (p.matches(pattern)) {
+						casted = true;
+						String s = castPatterns.get(p);
+						String [] command = new String [] {"/cast",s};
+						spellNames.get(s).cast(player, command);
+						break;
+					}
+				}
+				if (!casted) {
+					player.sendMessage(Spell.TEXT_COLOR + "Your spell fails.");
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void onArmSwing(Player player) {
+		if (CAST_PATTERNS_ENABLED && player.getItemInHand() == CAST_PATTERNS_WAND && activeCastPatterns.containsKey(player.getName())) {
+			activeCastPatterns.get(player.getName()).addMovement(player.getRotation(), player.getPitch());
+		}
+	
 		// call spell hooks
 		for (Spell spell : armSwingCalls) {
 			spell.onArmSwing(player);
@@ -405,6 +451,13 @@ public class MagicSpellsListener extends PluginListener {
 	public void registerSpellName(String spellName, Spell spell, String spellDescription) {
 		spellNames.put(spellName.toLowerCase(), spell);
 		spellDescs.put(spellName.toLowerCase(), spellDescription);
+	}
+	
+	// spells call this to add a cast pattern for the spell
+	public void registerCastPattern(String spell, String pattern) {
+		if (CAST_PATTERNS_ENABLED) {
+			castPatterns.put(new CastPattern(pattern), spell);
+		}
 	}
 	
 	// spells call this to specify they require block place checks

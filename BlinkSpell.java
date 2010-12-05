@@ -22,7 +22,9 @@ public class BlinkSpell extends Spell {
 		super(listener,properties);
 		
 		// register spell
-		listener.registerSpellName(properties.getString("blink-spellname","blink"),this,properties.getString("blink-desc","Teleport to your targeted location."));
+		String n = properties.getString("blink-spellname","blink");
+		listener.registerSpellName(n,this,properties.getString("blink-desc","Teleport to your targeted location."));
+		listener.registerCastPattern(n,properties.getString("blink-cast-pattern","U"));
 		
 		// get properties
 		REDSTONE_COST = properties.getInt("blink-redstone-cost",5);

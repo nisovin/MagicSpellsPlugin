@@ -32,7 +32,9 @@ public class FastGrowSpell extends Spell {
 		super(listener,properties);
 		
 		// register spell
-		listener.registerSpellName(properties.getString("fastgrow-spellname","fastgrow"),this,properties.getString("fastgrow-desc","Causes planted saplings to grow instantly."));
+		String n = properties.getString("fastgrow-spellname","fastgrow");
+		listener.registerSpellName(n,this,properties.getString("fastgrow-desc","Causes planted saplings to grow instantly."));
+		listener.registerCastPattern(n,properties.getString("fastgrow-cast-pattern","U,L,R"));
 		listener.requireBlockPlaceCall(this);
 		
 		// get properties
@@ -67,11 +69,11 @@ public class FastGrowSpell extends Spell {
 		if (!growers.contains(player.getName().toLowerCase())) {
 			if (removeReagents(player,reagents)) {
 				growers.add(player.getName().toLowerCase());
-				player.sendMessage(TEXT_COLOR + STR_CAST_ON);
+				sendMessage(player, STR_CAST_ON);
 				sendMessageToPlayersInRange(player,STR_CAST_ON_OTHERS.replace("[caster]",player.getName()));
 				return true;
 			} else {
-				player.sendMessage(TEXT_COLOR + STR_NO_REAGENTS);
+				sendMessage(player, STR_NO_REAGENTS);
 				return false;
 			}
 		} else {
@@ -82,7 +84,7 @@ public class FastGrowSpell extends Spell {
 	
 	private void turnOff(Player player) {
 		growers.remove(player.getName().toLowerCase());
-		player.sendMessage(TEXT_COLOR + STR_CAST_OFF);
+		sendMessage(player, STR_CAST_OFF);
 		sendMessageToPlayersInRange(player,STR_CAST_OFF_OTHERS.replace("[caster]",player.getName()));	
 	}
 	
@@ -102,15 +104,15 @@ public class FastGrowSpell extends Spell {
 				//boolean success = tree.a(etc.getServer().getMCServer().e, rand, blockPlaced.getX(), blockPlaced.getY(), blockPlaced.getZ());
 
 				if (success) {
-					player.sendMessage(TEXT_COLOR + STR_PLANT);
+					sendMessage(player, STR_PLANT);
 					sendMessageToPlayersInRange(player,STR_PLANT_OTHERS.replace("[caster]",player.getName()));
 				} else {
-					player.sendMessage(TEXT_COLOR + STR_PLANT_ERR);
+					sendMessage(player, STR_PLANT_ERR);
 					blockPlaced.setType(6);
 					blockPlaced.update();
 				}
 			} else {
-				player.sendMessage(TEXT_COLOR + STR_NO_REAGENTS);
+				sendMessage(player, STR_NO_REAGENTS);
 				turnOff(player);
 			}
 		}

@@ -14,6 +14,7 @@ public class MagicSpells extends Plugin {
 		loader.addListener(PluginLoader.Hook.HEALTH_CHANGE, listener, this, PluginListener.Priority.MEDIUM);
 		loader.addListener(PluginLoader.Hook.DAMAGE, listener, this, PluginListener.Priority.MEDIUM);
 		loader.addListener(PluginLoader.Hook.FLOW, listener, this, PluginListener.Priority.MEDIUM);
+		loader.addListener(PluginLoader.Hook.ITEM_USE, listener, this, PluginListener.Priority.MEDIUM);
 		loader.addCustomListener(new SpellLearnListener(listener));
 	}
 	

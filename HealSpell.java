@@ -22,7 +22,9 @@ public class HealSpell extends Spell {
 		super(listener,properties);
 		
 		// register spell
-		listener.registerSpellName(properties.getString("heal-spellname","heal"),this,properties.getString("heal-desc","Restores your health."));
+		String n = properties.getString("heal-spellname","heal");
+		listener.registerSpellName(n,this,properties.getString("heal-desc","Restores your health."));
+		listener.registerCastPattern(n,properties.getString("heal-cast-pattern","UR,DR"));
 		
 		// get properties
 		REDSTONE_COST = properties.getInt("heal-redstone-cost",15);

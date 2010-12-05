@@ -21,7 +21,9 @@ public class BoomSpell extends Spell {
 		super(listener,properties);
 		
 		// register spell
-		listener.registerSpellName(properties.getString("boom-spellname","boom"),this,properties.getString("boom-desc","Blows stuff up at target."));
+		String n = properties.getString("boom-spellname","boom");
+		listener.registerSpellName(n,this,properties.getString("boom-desc","Blows stuff up at target."));
+		listener.registerCastPattern(n,properties.getString("boom-cast-pattern","UL,DR,UR,DL,DR,UL,DL,UR"));
 		
 		// get properties
 		REDSTONE_COST = properties.getInt("boom-redstone-cost",10);
@@ -66,12 +68,12 @@ public class BoomSpell extends Spell {
 			// find this method by searching for "explode"
 			etc.getServer().getMCServer().e.a(null,(double)target.getX(),(double)target.getY(),(double)target.getZ(), BLAST_RADIUS*1.0F);
 		
-			player.sendMessage(TEXT_COLOR + STR_CAST);
+			sendMessage(player, STR_CAST);
 			sendMessageToPlayersInRange(player, STR_CAST_OTHERS);
 		
 			return true;
 		} else {
-			player.sendMessage(TEXT_COLOR + STR_NO_REAGENTS);
+			sendMessage(player, STR_NO_REAGENTS);
 		
 			return false;
 		}

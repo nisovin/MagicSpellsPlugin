@@ -34,6 +34,8 @@ public class AscendAndDescendSpell extends Spell {
 		DESCEND_SPELLNAME = properties.getString("descend-spellname","descend");
 		listener.registerSpellName(ASCEND_SPELLNAME,this,properties.getString("ascend-desc","Causes you to ascend to a higher location."));
 		listener.registerSpellName(DESCEND_SPELLNAME,this,properties.getString("descend-desc","Causes you to descend to a lower location."));
+		listener.registerCastPattern(ASCEND_SPELLNAME,properties.getString("ascend-cast-pattern","U,-"));
+		listener.registerCastPattern(DESCEND_SPELLNAME,properties.getString("descend-cast-pattern","D,-"));
 		
 		// get properties
 		REDSTONE_COST = properties.getInt("ascend-descend-redstone-cost",10);
@@ -63,7 +65,7 @@ public class AscendAndDescendSpell extends Spell {
 	
 	public boolean cast(Player player, String [] command) {
 		if (COOLDOWN > 0 && isOnCooldown(player, COOLDOWN)) {
-			player.sendMessage(TEXT_COLOR + STR_ON_COOLDOWN);
+			sendMessage(player, STR_ON_COOLDOWN);
 			return false;
 		} else {
 		
@@ -74,7 +76,7 @@ public class AscendAndDescendSpell extends Spell {
 					if (removeReagents(player,reagents)) {
 						sendMessageToPlayersInRange(player,STR_DESCEND_CAST_OTHERS_LEAVE.replace("[caster]",player.getName()));
 						player.teleportTo(location);
-						player.sendMessage(TEXT_COLOR + STR_DESCEND_CAST);
+						sendMessage(player, STR_DESCEND_CAST);
 						sendMessageToPlayersInRange(player,STR_DESCEND_CAST_OTHERS_ARRIVE.replace("[caster]",player.getName()));
 					
 						if (COOLDOWN > 0) {
@@ -84,14 +86,14 @@ public class AscendAndDescendSpell extends Spell {
 						return true;
 					} else {
 						// reagents not found
-						player.sendMessage(TEXT_COLOR + STR_NO_REAGENTS);
+						sendMessage(player, STR_NO_REAGENTS);
 						return false;
 					}
 					
 				} else {
 				
 					// no spot found to ascend
-					player.sendMessage(TEXT_COLOR + STR_DESCEND_FAIL);
+					sendMessage(player, STR_DESCEND_FAIL);
 					return false;
 				}
 			
@@ -101,7 +103,7 @@ public class AscendAndDescendSpell extends Spell {
 					if (removeReagents(player,reagents)) {
 						sendMessageToPlayersInRange(player,STR_ASCEND_CAST_OTHERS_LEAVE.replace("[caster]",player.getName()));
 						player.teleportTo(location);
-						player.sendMessage(TEXT_COLOR + STR_ASCEND_CAST);
+						sendMessage(player, STR_ASCEND_CAST);
 						sendMessageToPlayersInRange(player,STR_ASCEND_CAST_OTHERS_ARRIVE.replace("[caster]",player.getName()));
 					
 						if (COOLDOWN > 0) {
@@ -111,13 +113,13 @@ public class AscendAndDescendSpell extends Spell {
 						return true;
 					} else {
 						// reagents not found
-						player.sendMessage(TEXT_COLOR + STR_NO_REAGENTS);
+						sendMessage(player, STR_NO_REAGENTS);
 						return false;
 					}
 				} else {
 				
 					// no spot found to ascend
-					player.sendMessage(TEXT_COLOR + STR_ASCEND_FAIL);
+					sendMessage(player, STR_ASCEND_FAIL);
 					return false;
 				}
 			} else {
